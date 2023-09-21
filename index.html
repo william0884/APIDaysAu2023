@@ -72,8 +72,128 @@
 
 
 					<img data-src="public/images/spacegif.jpg" height="400" width="600"/>
+
+				</textarea>
+
+			</section>
+
+					<section data-auto-animate>
+						<h2 data-id="code-title">NASA EARTH IMAGE REQUEST</h2>
+						<pre data-id="code-animation"><code class="hlpy python" data-trim data-line-numbers>
+			
+						import requests
+						import os
+						import arrow
+						import shutil
+						
+						blogdir = '/Users/williammckee/Developer/spacegif-output'
+						thedate = '2019-05-20'
+						
+						rqnat = requests.get('https://epic.gsfc.nasa.gov/api/natural/date/' + thedate + '?api_key=DEMO_KEY')
+						rjsn = rqnat.json()
+								
+						
+						lenet = len(rjsn)
+						somnewd = arrow.get(rjsn[0]['date'])
+						images = []
+						dateinput = arrow.get(thedate)
+						try:
+							os.makedirs(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d' + '/template'))
+						except FileExistsError:
+							pass
+						
+						
+						for somn in range(0, lenet):
+							urlearth = 'https://epic.gsfc.nasa.gov/archive/natural/' + somnewd.strftime('%Y/%m/%d') + '/png/' + rjsn[somn]['image'] + '.png'
+							response = requests.get(urlearth, stream=True)
+							with open('{}/{}.png'.format(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d' + '/template/'), rjsn[somn]['image']), 'wb') as out_file:
+								shutil.copyfileobj(response.raw, out_file)
+								del response
+						print(os.listdir(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d' + '/template')))
+		
+		
+						</code></pre>
+						<p>Followed by code to download Mars Rover images: api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos</p>
+					</section>
+					<section data-auto-animate>
+						<h2 data-id="code-title">Merge of earth + mars images</h2>
+						<pre data-id="code-animation"><code class="hlpy python" data-trim data-line-numbers>
+			
+						def mergeearthmars(blogdir, thedate):
+							#give it date to merge. 
+							dateinput = arrow.get(thedate)
+							foldate = dateinput.strftime('%Y/%m/%d')
+							#merge the earth and mars images together. 
+							spaceimg = os.listdir('{}/galleries/{}/template/'.format(blogdir, foldate))
+							ranc = random.choice(os.listdir('{}/galleries/{}/rovers/'.format(blogdir, foldate)))
+							try:
+								os.makedirs(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d') + '/blend/')
+							except FileExistsError:
+								pass
+						
+							rancam = '{}/galleries/{}/rovers/{}/'.format(blogdir, foldate, ranc)
+							fileran = random.choice(os.listdir(rancam))
+							ranmar = '{}/{}'.format(rancam, fileran)
+							marimg = PIL.Image.open('{}'.format(ranmar))
+							marimg = marimg.resize([512,512])
+							marimg = marimg.convert('RGB')
+							for spci in spaceimg:
+								earimg = PIL.Image.open('{}/galleries/{}/template/{}'.format(blogdir, foldate, spci))
+								earimg= earimg.resize([512,512])
+								earimg = earimg.convert('RGB')
+								alphaBlended1 = Image.blend(earimg, marimg, alpha=.5)
+								alphaBlended1.save('{}/galleries/{}/blend/{}'.format(blogdir, foldate, spci))
+						
+							return({"images": os.listdir('{}/galleries/{}/blend/'.format(blogdir, foldate))})
+		
+						</code></pre>
+					</section>
+					<section data-auto-animate>
+						<h2 data-id="code-title">Generating of GIF from blended images</h2>
+						<pre data-id="code-animation"><code class="hlpy python" data-trim data-line-numbers>
+			
+
+						def mergeearthmars(blogdir, thedate):
+							#give it date to merge. 
+							dateinput = arrow.get(thedate)
+							foldate = dateinput.strftime('%Y/%m/%d')
+							#merge the earth and mars images together. 
+							spaceimg = os.listdir('{}/galleries/{}/template/'.format(blogdir, foldate))
+							ranc = random.choice(os.listdir('{}/galleries/{}/rovers/'.format(blogdir, foldate)))
+							try:
+								os.makedirs(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d') + '/blend/')
+							except FileExistsError:
+								pass
+						
+							rancam = '{}/galleries/{}/rovers/{}/'.format(blogdir, foldate, ranc)
+							fileran = random.choice(os.listdir(rancam))
+							ranmar = '{}/{}'.format(rancam, fileran)
+							marimg = PIL.Image.open('{}'.format(ranmar))
+							marimg = marimg.resize([512,512])
+							marimg = marimg.convert('RGB')
+							for spci in spaceimg:
+								earimg = PIL.Image.open('{}/galleries/{}/template/{}'.format(blogdir, foldate, spci))
+								earimg= earimg.resize([512,512])
+								earimg = earimg.convert('RGB')
+								alphaBlended1 = Image.blend(earimg, marimg, alpha=.5)
+								alphaBlended1.save('{}/galleries/{}/blend/{}'.format(blogdir, foldate, spci))
+						
+							return({"images": os.listdir('{}/galleries/{}/blend/'.format(blogdir, foldate))})
+		
+								</code></pre>
+							</section>
+
+							<section data-markdown data-background-color="#4c5844ff">
+								<textarea data-template>
+								<h2 style="color:rgb(250, 225, 81)">'2019-01-30', 'hello apidaysau'</h2>
+			
+								<img data-src="public/images/hello-apidaysau.gif" height="512" width="512"/>
+			
+							</textarea>
+						</section>
 				
-					---
+					<section data-markdown data-background-color="#4c5844ff">
+						<textarea data-template>
 
 					<h2 style="color:rgb(250, 225, 81)">InstantCare</h2>
 					<p>Hack4health - November 2018</p> 
@@ -127,6 +247,8 @@
 
 				</textarea>
 			</section>	
+
+
 
 			</div>
 		</div>
