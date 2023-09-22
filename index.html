@@ -240,13 +240,293 @@
 
 					<img data-src="public/images/spamscamemail.jpg" height="450" width="338"/>
 
-				---
+				
 
 
 
 
 				</textarea>
 			</section>	
+			<section data-auto-animate>
+				<h2 data-id="code-title">Generating fake person and a currency</h2>
+				<pre data-id="code-animation"><code class="hlgo golang" data-trim data-line-numbers>
+
+			func Requestperson() (string, error) {
+				url := "https://randomuser.me/api/"
+			
+				res, err := http.Get(url)
+				if err != nil {
+					return "", err
+				}
+				defer res.Body.Close()
+			
+				body, err := ioutil.ReadAll(res.Body)
+				if err != nil {
+					return "", err
+				}
+			
+				var data struct {
+					Results []Person `json:"results"`
+				}
+				err = json.Unmarshal(body, &data)
+				if err != nil {
+					return "", err
+				}
+			
+				fullname := data.Results[0].Name.First + " " + data.Results[0].Name.Last + " of " + data.Results[0].Location.City + ", " + data.Results[0].Location.Country
+				return fullname, nil
+			}
+			
+			func Requestcurrency() (string, error) {
+			
+				url := "https://api.currencyfreaks.com/latest?apikey=4f7765e522f84a37ab63672b887ed45e"
+			
+				res, err := http.Get(url)
+				if err != nil {
+					return "", err
+				}
+				defer res.Body.Close()
+			
+				body, err := ioutil.ReadAll(res.Body)
+				if err != nil {
+					return "", err
+				}
+			
+				var data map[string]interface{}
+				err = json.Unmarshal(body, &data)
+				if err != nil {
+					return "", err
+				}
+			
+				rates := data["rates"].(map[string]interface{})
+			
+				currencies := make([]string, 0, len(rates))
+				for currency := range rates {
+					currencies = append(currencies, currency)
+				}
+			
+				rand.Seed(time.Now().UnixNano())
+				randomCurrency := currencies[rand.Intn(len(currencies))]
+
+				return randomCurrency, nil
+			}
+			</code>
+			</pre>
+			</section>
+
+			<section data-auto-animate>
+				<h2 data-id="code-title">Getting a random company</h2>
+				<pre data-id="code-animation"><code class="hlgo golang" data-trim data-line-numbers>
+
+					func getCompanyName() (string, error) {
+						rand.Seed(time.Now().UnixNano())
+						rannm := rand.Intn(3075362) + 1
+						url := "https://data.gov.au/data/api/3/action/datastore_search?resource_id=5c3914e6-413e-4a2c-b890-bf8efe3eabf2&limit=1&offset=" + strconv.Itoa(rannm)
+					
+						resp, err := http.Get(url)
+						if err != nil {
+							return "", err
+						}
+						defer resp.Body.Close()
+					
+						body, err := ioutil.ReadAll(resp.Body)
+						if err != nil {
+							return "", err
+						}
+					
+						var response Response
+						err = json.Unmarshal(body, &response)
+						if err != nil {
+							return "", err
+						}
+					
+						re := regexp.MustCompile(" +")
+						res := re.ReplaceAllString(response.Result.Records[0].CompanyName, " ")
+					
+						return res, nil
+						}
+					</code>
+					</pre>
+					</section>
+					<section data-auto-animate>
+						<h2 data-id="code-title">Latest website visit & putting it all together</h2>
+						<pre data-id="code-animation"><code class="hlgo golang" data-trim data-line-numbers>
+
+							func Requestweb() string {
+								url := `http://localhost:5600/api/0/`
+								+ `buckets/aw-watcher-web-chrome/events?limit=1`
+							
+								res, err := http.Get(url)
+								if err != nil {
+									fmt.Println(err)
+								}
+								defer res.Body.Close()
+							
+								body, err := ioutil.ReadAll(res.Body)
+								if err != nil {
+									fmt.Println(err)
+								}
+							
+								var data []Webhistory
+								err = json.Unmarshal(body, &data)
+								if err != nil {
+									panic(err)
+								}
+							
+								urls := data[0].Data.URL
+								times := data[0].Timestamp.Format("Mon, 02 Jan 2006 15:04:05")
+							
+								fullname, err := Requestperson()
+								if err != nil {
+									panic(err)
+								}
+							
+								currency, err := Requestcurrency()
+								if err != nil {
+									panic(err)
+								}
+							
+								companyName, err := getCompanyName()
+								if err != nil {
+									panic(err)
+								}
+							
+								Bodytext := "Hello, My name is " + fullname + `. My 
+								company is ` + companyName + ". On " + times + ` you visited 
+								the url ` + urls + `. You must send 
+								100,000,000 ` + currency + ` via this link: 
+								example.com within 7 days. 
+								If you do not I will tell your friends and` + ` 
+								family that you visited the site. Be kind, ` + fullname
+
+								return Bodytext
+								}
+						</code>
+						</pre>
+						</section>
+
+						
+
+						<section data-auto-animate>
+							<h2 data-id="code-title">Result Output</h2>
+							<pre data-id="code-animation"><code class="hljson json" data-trim>
+						  {
+							"message": Hello, My name is Ellen Jacobs of Wells, United Kingdom. 
+							My company is THE FAIRFIELD CHASE CENTRE PTY LTD. On Fri, 22 Sep 
+							2023 05:44:19 you visited the url http://localhost:8080/body. 
+							You must send 100,000,000 ENS via this link: example.com within 
+							7 days. If you do not I will tell your friends and family that you 
+							visited the site. Be kind, Ellen Jacobs of Wells, United Kingdom"
+						  }
+						  </code>
+						  </pre>
+						  </section>
+						  
+						  <section data-markdown data-background-color="#4c5844ff">
+							<textarea data-template>
+							  <h2 style="color:rgb(250, 225, 81)">HugMorty</h2>
+							  <p>So you think you can hack - May 18 till Jun 18, 2023</p>
+							  <p>AI image / video generator with Rick & Morty prompts</p>
+							  <img data-src="public/images/ai.png" height="512" width="512"/>
+							</textarea>
+						  </section>
+						  <section data-auto-animate>
+							<h2 data-id="code-title">Generate sentence from R&M</h2>
+							<pre data-id="code-animation"><code class="highlightjs javascript" data-trim data-line-numbers>
+								import { NextApiRequest, NextApiResponse } from "next";
+								import { HfInference } from '@huggingface/inference'
+								const hf = new HfInference(process.env.HF_ACCESS_TOKEN)
+								import { getCharacter  } from 'rickmortyapi'
+								import { writeFileSync } from 'fs';
+								import { Amplify, Storage } from 'aws-amplify';
+								import awsconfig from '../../aws-exports';
+								Amplify.configure(awsconfig);
+
+								export default async function handler(req: NextApiRequest, res:NextApiResponse) {
+									const { query: { prompt},
+									  method,
+									} = req;
+
+								const randomChar = Math.random() * (826 - 1) + 1;
+								const char = await getCharacter(Math.floor(randomChar))
+								const sentence = char.data.name + ' the ' + 
+									char.data.gender + ' ' + char.data.species + ' from ' 
+									char.data.location.name +  ' is ' + char.data.status + '.'
+
+
+
+							</code>
+							</pre>
+							<p>"Evolved Narnian Disguised as Morty the Male Humanoid from Narnia Dimension is Alive."</p>
+							</section>
+							
+							<section data-auto-animate>
+								<img data-src="public/images/Charimg.png" height="250" width="250"/>
+
+
+							<pre data-id="code-animation"><code class="highlightjs javascript" data-trim data-line-numbers>
+	
+							const fetchImg = await fetch(char.data.image)
+							const arrayBuffer = await fetchImg.arrayBuffer();
+							const buffer = Buffer.from(arrayBuffer);
+
+							const imgclas = await hf.imageToText({
+								data: buffer,
+								model: 'nlpconnect/vit-gpt2-image-captioning'
+								})
+							
+						</code>
+					</pre>
+					<p>"a painting of a woman with a cat on her head "</p>
+
+					</section>
+					<section data-auto-animate>
+						<pre data-id="code-animation"><code class="highlightjs javascript" data-trim data-line-numbers>
+					const imgCap = await hf.textToImage({
+						inputs: sentence + " " + imgclas.generated_text + " " + prompt,
+						//model: 'ogkalu/Comic-Diffusion',
+						model: 'DucHaiten/DH_ClassicAnime'
+					  })
+
+					const aBuffer = await imgCap.arrayBuffer();
+				  	const timestamp = Number(new Date()); 
+					const fileUrl = output.input + '-' + timestamp + ".png"
+					  
+					Storage.put(fileUrl, aBuffer, {contentType: "image/png"});
+				  	const signedURL = await Storage.get(fileUrl);
+
+					res.status(200).json({'imageurl': signedURL});
+						
+					  </code>
+						</pre>
+					<img data-src="public/images/morty.png" height="250" width="250"/>
+					</section>
+					<section data-auto-animate>
+					<pre data-id="code-animation"><code class="highlightjs nextjs" data-trim data-line-numbers>
+					export default function Ricky() {
+					return (
+					<div className="w-full  max-w-xs ml-10">
+
+					<form action="/api/hugmorty" method="post">
+					<h1>Hug Morty</h1>
+					<label htmlFor="input">What style:</label>
+					<input type="text" id="input" name="input"/>
+					<label htmlFor="changes">Change image how:</label>
+					<input type="text" id="input" name="changes"/>
+					<button type="submit">Submit</button>
+					</form> ) }
+
+				</code>
+			</pre>
+			<img data-src="public/images/morty-frontend.png" height="259" width="300"/>
+
+		</section>
+
+
+
+
+
+
 
 
 
