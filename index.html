@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<title>reveal.js</title>
+		<title>Consuming and Building APIs during hackathons</title>
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/black.css">
@@ -17,17 +17,19 @@
 					<textarea data-template>
 
 					<h2 style="color:#59a9ebff">Consuming and Building APIs during hackathons</h2>
+
 					<img data-src="public/images/logo-au.png" height="85" width="230" />
-					<h2 style="color:#59a9ebff">October 2023</h2>
+					<h2 style="color:#59a9ebff">12th October 2023</h2>
+					<h2 style="color:#59a9ebff">William McKee</h2>
 
 					---
 					<h2 style="color:#59a9ebff">Agenda</h2>
 
-					- About 
-					- Overview 
-					- Projects 
-					- Learnings/Takeaways 
-					- QA 
+					- About Me / Hackathons  
+					- Hackathons / Projects 
+					- Learnings / Tools
+					- Get Involved / Resources 
+					- Contact / QA 
 
 					</textarea>
 				</section>
@@ -40,18 +42,30 @@
 					<p>Study at Massey Uni & do dev contract work</p>
 					<p>Enjoy travel, drawing, coding, video games</p>
 
+
+					<aside class="notes">
+						As mentioned. William. Full stack developer. For small business - ecommerce and yoga studios.
+						Photo in Penung, Malaysia.   
+					  </aside>
+
 				</textarea>
+
 					</section>
 				
-					<section section style="color:##59a9ebff;" data-markdown data-background-image="public/images/matrix-code.gif" >
+					<section section style="color:#59a9ebff;" data-markdown data-background-image="public/images/matrix-code.gif" >
 
 					<textarea data-template>
 
 					<h2 style="color:#59a9ebff">About Technical</h2>
-					<p>Self taught Python during Art school (2011)</p>
-					<p>Started attending hackathons & conferences</p>
-					<p>Moved to Sydney worked as developer and attended hackathons</p>
+					<p style="color: white">Self taught Python during Art school (2011)</p>
+					<p style="color: white">Started attending hackathons & conferences</p>
+					<p style="color: white">Moved to Sydney worked as developer and attended hackathons</p>
+					<aside class="notes">
+						Build better websites for my artwork. Enjoyed coding. In Sydney did API Development with Python. 
+					  Hackathons
+					</aside>
 				</textarea>
+
 					</section>
 				
 				<section data-markdown data-background-color="#1e2837ff">
@@ -64,7 +78,12 @@
 					<p>48 hour research and development projects.</p>
 					<p>Could be run as public or company internal event.</p>
 					<p>In person or online.</p>
+
+					<aside class="notes">
+						research and development projects. given a theme / challenge. prizes.
+					  </aside>
 				</textarea>
+
 				</section>
 				<section data-markdown data-background-color="#4c5844ff">
 					<textarea data-template>
@@ -72,11 +91,14 @@
 					<p>NASA Space Apps - October 2018</p> 
 					<p>Creating gifs from NASA photography</p>   
 					<img data-src="public/images/spacegif.jpg" height="400" width="600"/>
-
+					<aside class="notes">
+						App in Sydney. NASA Earth and Mars rover photography. 'greeting '
+					  </aside>
 				</textarea>
 
+
 			</section>
-					<section data-auto-animate>
+						<section data-auto-animate>
 						<h2 data-id="code-title">NASA EARTH IMAGE REQUEST</h2>
 						<pre data-id="code-animation"><code class="hlpy python" height="500" data-trim data-line-numbers>
 			
@@ -88,19 +110,14 @@
 						blogdir = '/Users/williammckee/Developer/spacegif-output'
 						thedate = '2019-05-20'
 						
-						rqnat = requests.get('https://epic.gsfc.nasa.gov/api/natural/date/' + thedate + '?api_key=DEMO_KEY')
+						rqnat = requests.get('https://epic.gsfc.nasa.gov/api/
+											natural/date/' + thedate + '?api_key=DEMO_KEY')
 						rjsn = rqnat.json()
 								
-						
 						lenet = len(rjsn)
 						somnewd = arrow.get(rjsn[0]['date'])
 						images = []
-						dateinput = arrow.get(thedate)
-						try:
-							os.makedirs(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d' + '/template'))
-						except FileExistsError:
-							pass
-						
+						dateinput = arrow.get(thedate)		
 						
 						for somn in range(0, lenet):
 							urlearth = 'https://epic.gsfc.nasa.gov/archive/natural/' + somnewd.strftime('%Y/%m/%d') + '/png/' + rjsn[somn]['image'] + '.png'
@@ -110,29 +127,21 @@
 								del response
 						print(os.listdir(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d' + '/template')))
 		
-		
 						</code></pre>
 						<img data-src="public/images/nzau.png" height="231" width="500"/>
 						<aside class="notes">
-							Followed by code to download Mars Rover images: api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos
+							Give it a date: 20th of May 2019. NASA EPIC Api: Photography of Earth. Full rotation. Followed by code to download Mars Rover images: api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos
 						  </aside>
 					</section>
 					<section data-auto-animate>
 						<h2 data-id="code-title">Merge of earth + mars</h2>
 						<pre data-id="code-animation"><code class="hlpy python" data-trim data-line-numbers>
 			
-						def mergeearthmars(blogdir, thedate):
-							#give it date to merge. 
 							dateinput = arrow.get(thedate)
 							foldate = dateinput.strftime('%Y/%m/%d')
-							#merge the earth and mars images together. 
 							spaceimg = os.listdir('{}/galleries/{}/template/'.format(blogdir, foldate))
 							ranc = random.choice(os.listdir('{}/galleries/{}/rovers/'.format(blogdir, foldate)))
-							try:
-								os.makedirs(blogdir + '/galleries/' + dateinput.strftime('%Y/%m/%d') + '/blend/')
-							except FileExistsError:
-								pass
-						
+
 							rancam = '{}/galleries/{}/rovers/{}/'.format(blogdir, foldate, ranc)
 							fileran = random.choice(os.listdir(rancam))
 							ranmar = '{}/{}'.format(rancam, fileran)
@@ -146,15 +155,17 @@
 								alphaBlended1 = Image.blend(earimg, marimg, alpha=.5)
 								alphaBlended1.save('{}/galleries/{}/blend/{}'.format(blogdir, foldate, spci))
 						
-							return({"images": os.listdir('{}/galleries/{}/blend/'.format(blogdir, foldate))})
 		
 						</code></pre>
 						<img data-src="public/images/blend.png" height="256" width="256"/>
-
+						<aside class="notes">
+							PILLOW used to merge the folder of earth images, with a random photo from Mars rover. 
+						</aside>
 					</section>
 					<section data-auto-animate>
-						<h2 data-id="code-title">Generating of GIF from blended images</h2>
+						<h2 data-id="code-title">Input text & Generate GIF</h2>
 						<pre data-id="code-animation"><code class="hlpy python" data-trim data-line-numbers>
+							msg = 'hello apidaysau'
 							dateinput = arrow.get(thedate)
 							msgslug = msg.replace(' ', '-')
 							spaceimg = os.listdir(blogdir + '/galleries/' + 
@@ -185,14 +196,18 @@
 							imageio.mimsave(blogdir + '/galleries/' + dateinput.strftime
 							('%Y/%m/%d/') + msgslug + '.gif', images, fps=6)
 								</code></pre>
+								<img data-src="public/images/hello-api.png" height="200" width="200"/>
+								<aside class="notes">
+									Give it text, writes it to the blended images, textwrap characters, so fits on screen.	
+								</aside>
 							</section>
 
 							<section data-markdown data-background-color="#4c5844ff">
 								<textarea data-template>
-								<h2 style="color:rgb(250, 225, 81)">'2019-01-30', 'hello apidaysau'</h2>
+								<h2 style="color:rgb(250, 225, 81)">Result</h2>
 			
-								<img data-src="public/images/hello-apidaysau.gif" height="512" width="512"/>
-			
+								<img data-src="public/images/hello-apidaysau.gif" height="490" width="490"/>
+								<p>Wrap the app with FastAPI</p>
 							</textarea>
 						</section>
 					<section data-markdown data-background-color="#1e2837ff">
@@ -205,8 +220,9 @@
 
 					<p>Then learnt (and continue to use):</p>
 					<img data-src="public/images/nextjs-logo.svg" height="154" width="256"/>
-
-
+					<aside class="notes">
+					Been doing Python for awhile. Was the only language I knew well. Decided to learn Golang. Completely difference syntax. Refreshing. Went on to learn Javascript/Typescript, Svelte, and NextJS. Tend to use for most projects now.
+					</aside>
 				</textarea>
 			</section>
 			<section data-markdown data-background-color="#4c5844ff">
@@ -219,6 +235,11 @@
 
 					<img data-src="public/images/terribleideas.jpg" height="338" width="450"/>
 
+
+					<aside class="notes">
+						Photo of me and my team mate Daniel Tran. Brainstorming in the whiteboare in background. The location was at University of Auckland. 
+
+					</aside>
 				
 
 
@@ -257,7 +278,7 @@
 			
 			func Requestcurrency() (string, error) {
 			
-				url := "https://api.currencyfreaks.com/latest?apikey=4f7765e522f84a37ab63672b887ed45e"
+				url := "https://api.currencyfreaks.com/latest?apikey=TESTKEY"
 			
 				res, err := http.Get(url)
 				if err != nil {
@@ -291,6 +312,11 @@
 			</code>
 			</pre>
 			<p>Ellen Jacobs of Wells, United Kingdom | ENS</p>
+
+			<aside class="notes">
+				Random user API to generate person. Firstname, Lastname, City Country is what I use. Endpoint also returns - gender, photo, email, username etc. <br>
+				Currency Freaks to get a random currency. eg NZD, SGD. I'm ignore the conversions. Endpoint has a base currency (USD) and convert rates. 
+			</aside>
 			</section>
 
 			<section data-auto-animate>
@@ -327,9 +353,12 @@
 					</code>
 					</pre>
 					<p>THE FAIRFIELD CHASE CENTRE PTY LTD</p>
+					<aside class="notes">
+						Getting a random company from Aussie Companies directory. For example... company name. 				
+					</aside>
 					</section>
 					<section data-auto-animate>
-						<h2 data-id="code-title">Latest website visit & putting it all together</h2>
+						<h2 data-id="code-title">Latest AW website visit & putting it together</h2>
 						<pre data-id="code-animation"><code class="hlgo golang" data-trim data-line-numbers>
 
 							func Requestweb() string {
@@ -400,13 +429,14 @@
 						  }
 						  </code>
 						  </pre>
+						  <p>Wrap the function in Gin. Frontend built in React sends email with EmailJS.</p>
 						  </section>
 						  
 						  <section data-markdown data-background-color="#4c5844ff">
 							<textarea data-template>
 							  <h2 style="color:rgb(250, 225, 81)">HugMorty</h2>
 							  <p>So you think you can hack - May 18 till Jun 18, 2023</p>
-							  <p>AI image with Rick & Morty prompts</p>
+							  <p>AI image generator with Rick & Morty prompts</p>
 							  <img data-src="public/images/ai.png" height="512" width="512"/>
 							</textarea>
 						  </section>
@@ -487,13 +517,52 @@
 			<textarea data-template>
 
 			
-			<h2 style="color:#59a9ebff">Agenda</h2>
+			<h2 style="color:#59a9ebff">Learnings</h2>
 
-			- About 
-			- Overview 
-			- Projects 
-			- Learnings/Takeaways 
-			- QA 
+			- Great opotunity to learn new languages or libraries 
+			- Collabration is key.
+			- Relax. Not every hackathon works out. There is always next time. 
+
+
+			</textarea>
+		</section>
+
+
+		<section data-markdown data-background-color="#1e2837ff">
+			<textarea data-template>
+
+			
+			<h2 style="color:#59a9ebff">Hackathon Resources</h2>
+
+			<p>Directory</p>
+
+			- HackAUS - https://www.hackathonsaustralia.com/
+			- Hackathons - https://www.hackathons.com.au/
+			- DevPost - https://devpost.com/
+
+			<p>Upcoming</p>
+
+			- NASA Space Apps - October. 
+			- Terrible Ideas Hackathon - 8-10 December 2023. NZ/AU/UK https://terriblehack.com/
+			- GovHack - August(?) 2024.
+
+
+
+			</textarea>
+		</section>
+
+		<section data-markdown data-background-color="#1e2837ff">
+			<textarea data-template>
+
+			
+			<h2 style="color:#59a9ebff">Contact / QA</h2>
+
+			- Email: william.mckee@mcdepth.com
+			- McDepth Discord: needurl / qr code
+
+			<p>Questions?</p>
+
+
 
 			</textarea>
 		</section>
